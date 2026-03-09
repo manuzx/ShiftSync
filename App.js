@@ -66,7 +66,9 @@ export default function App() {
               tabBarInactiveTintColor: "black", // Cor do ícone/texto quando a aba NÃO está selecionada
               tabBarLabelStyle: { fontSize: 11, fontWeight: 'bold', marginBottom: 5 } // Estilo da legenda
             }}
-          >
+          > 
+
+          {/*Componente do Footer*/}
             {/* Definição da primeira aba: Novo Relatório */}
             <Tab.Screen 
               name="NovoRelatorio" 
@@ -137,8 +139,8 @@ const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 20, // Tamanho da fonte do título principal
-    fontWeight: "bold", // Deixa o texto em negrito
+    fontSize: 24, // Tamanho da fonte do título principal
+    fontWeight: "900", // Deixa o texto em negrito
     color: "#3d2800", // Cor marrom escura para contraste
   },
 
