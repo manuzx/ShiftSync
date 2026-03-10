@@ -2,26 +2,28 @@
 import React from "react";
 
 // Importa componentes nativos do React Native para estruturar a interface (Estilos, Containers, Texto e Rolagem)
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 
 // Importa o NavigationContainer, que é o "GPS" principal que gerencia o estado da navegação do app
-import { NavigationContainer } from "@react-navigation/native"; 
+import { NavigationContainer } from "@react-navigation/native";
 
 // Importa a função para criar a navegação por abas (Bottom Tabs) na parte inferior da tela
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 // Importa provedores de área segura para que o conteúdo não fique "escondido" sob entalhes (notches) ou câmeras
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"; 
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // Importa as famílias de ícones do Expo para usar na interface e na barra de navegação
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Feather from '@expo/vector-icons/Feather';
-import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 
 // Importa os componentes de tela em arquivos separados na pasta 'screens'
 import HomeScreen from "./src/screens/homeScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import HistoricoScreen from "./src/screens/historicoScreen";
+import LoginScreen from "./src/screens/LoginScreen";
+import { AuthProvider, useAuth } from "./src/context/AuthContext";
 
 // Inicializa a navegação por abas e armazena na constante Tab para ser usada como componente
 const Tab = createBottomTabNavigator();
@@ -44,64 +46,93 @@ function Header() {
   );
 }
 
+function AppContent() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#D08700" />
+      </View>
+    );
+  }
+
+  if (!user) {
+    return <LoginScreen />;
+  }
+
+  return (
+    // Container que envolve toda a lógica de rotas; deve haver apenas UM no projeto
+    <NavigationContainer>
+      {/* SafeAreaView impede que o Header "suba" para dentro da barra de status do celular */}
+      <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+        {/* Renderiza o cabeçalho fixo no topo, acima da navegação de telas */}
+        <Header />
+
+        {/* Define o navegador de abas e suas configurações visuais globais */}
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false, // Esconde o título padrão do React Navigation para usarmos o nosso Header
+            tabBarStyle: styles.footer, // Aplica o estilo personalizado à barra inferior
+            tabBarActiveTintColor: "#D08700", // Cor do ícone/texto quando a aba está selecionada
+            tabBarInactiveTintColor: "black", // Cor do ícone/texto quando a aba NÃO está selecionada
+            tabBarLabelStyle: {
+              fontSize: 11,
+              fontWeight: "bold",
+              marginBottom: 5,
+            }, // Estilo da legenda
+          }}
+        >
+          {/*Componente do Footer*/}
+          {/* Definição da primeira aba: Novo Relatório */}
+          <Tab.Screen
+            name="NovoRelatorio"
+            component={HomeScreen} // Componente que será renderizado nesta tela
+            options={{
+              tabBarLabel: "Novo", // Texto que aparece abaixo do ícone
+              tabBarIcon: ({ color }) => (
+                <Feather name="plus-circle" size={24} color={color} />
+              ),
+            }}
+          />
+
+          {/* Definição da segunda aba: Histórico */}
+          <Tab.Screen
+            name="Historico"
+            component={HistoricoScreen}
+            options={{
+              tabBarLabel: "Histórico",
+              tabBarIcon: ({ color }) => (
+                <Feather name="file-text" size={24} color={color} />
+              ),
+            }}
+          />
+
+          {/* Definição da terceira aba: Configurações */}
+          <Tab.Screen
+            name="Config"
+            component={SettingsScreen}
+            options={{
+              tabBarLabel: "Config",
+              tabBarIcon: ({ color }) => (
+                <SimpleLineIcons name="settings" size={24} color={color} />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </SafeAreaView>
+    </NavigationContainer>
+  );
+}
+
 // --- COMPONENTE PRINCIPAL ---
 export default function App() {
   return (
     // Provedor que gerencia os cálculos de áreas seguras (notch, barras de sistema) em todo o app
     <SafeAreaProvider>
-      {/* Container que envolve toda a lógica de rotas; deve haver apenas UM no projeto */}
-      <NavigationContainer>
-        {/* SafeAreaView impede que o Header "suba" para dentro da barra de status do celular */}
-        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-          
-          {/* Renderiza o cabeçalho fixo no topo, acima da navegação de telas */}
-          <Header />
-          
-          {/* Define o navegador de abas e suas configurações visuais globais */}
-          <Tab.Navigator
-            screenOptions={{
-              headerShown: false, // Esconde o título padrão do React Navigation para usarmos o nosso Header
-              tabBarStyle: styles.footer, // Aplica o estilo personalizado à barra inferior
-              tabBarActiveTintColor: "#D08700", // Cor do ícone/texto quando a aba está selecionada
-              tabBarInactiveTintColor: "black", // Cor do ícone/texto quando a aba NÃO está selecionada
-              tabBarLabelStyle: { fontSize: 11, fontWeight: 'bold', marginBottom: 5 } // Estilo da legenda
-            }}
-          > 
-
-          {/*Componente do Footer*/}
-            {/* Definição da primeira aba: Novo Relatório */}
-            <Tab.Screen 
-              name="NovoRelatorio" 
-              component={HomeScreen} // Componente que será renderizado nesta tela
-              options={{
-                tabBarLabel: "Novo", // Texto que aparece abaixo do ícone
-                tabBarIcon: ({ color }) => <Feather name="plus-circle" size={24} color={color} />
-              }}
-            />
-
-            {/* Definição da segunda aba: Histórico */}
-            <Tab.Screen 
-              name="Historico" 
-              component={HistoricoScreen} 
-              options={{
-                tabBarLabel: "Histórico",
-                tabBarIcon: ({ color }) => <Feather name="file-text" size={24} color={color} />
-              }}
-            />
-
-            {/* Definição da terceira aba: Configurações */}
-            <Tab.Screen 
-              name="Config" 
-              component={SettingsScreen} 
-              options={{
-                tabBarLabel: "Config",
-                tabBarIcon: ({ color }) => <SimpleLineIcons name="settings" size={24} color={color} />
-              }}
-            />
-          </Tab.Navigator>
-
-        </SafeAreaView>
-      </NavigationContainer>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
@@ -111,6 +142,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1, // Faz com que a View ocupe 100% da tela disponível
     backgroundColor: "#F5F5F5", // Cor de fundo cinza clara (padrão do app)
+  },
+
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
   },
 
   header: {
@@ -131,7 +169,7 @@ const styles = StyleSheet.create({
     alignItems: "center", // Centraliza o ícone horizontalmente dentro do quadrado
     justifyContent: "center", // Centraliza o ícone verticalmente dentro do quadrado
     borderWidth: 1, // Espessura da borda
-    borderColor: 'rgba(255,255,255,0.3)' // Borda branca suave com transparência
+    borderColor: "rgba(255,255,255,0.3)", // Borda branca suave com transparência
   },
 
   textGroup: {
