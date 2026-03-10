@@ -21,7 +21,7 @@ import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 // Importa os componentes de tela em arquivos separados na pasta 'screens'
 import HomeScreen from "./src/screens/homeScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
-import HistoricoScreen from "./src/screens/historicoScreen";
+import HistoricoScreen from './src/screens/historicoScreen';
 
 // Inicializa a navegação por abas e armazena na constante Tab para ser usada como componente
 const Tab = createBottomTabNavigator();
