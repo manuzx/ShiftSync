@@ -57,9 +57,8 @@ export default function HomeScreen() {
 
          {/* BLOCO ESTADO DA MÁQUINA */}
           <View style={styles.containerEstadoMaquina}>
-        <Text style={styles.titleEstMaq}>Estado da máquina:</Text>
-        <Text style={styles.SubTitleEstMaq}>
-          Descreva máquinas com anomalias, manutenções pendentes ou observações
+            <Text style={styles.titleEstMaq}>Estado da máquina:</Text>
+            <Text style={styles.SubTitleEstMaq}>Descreva máquinas com anomalias, manutenções pendentes ou observações
         </Text>
 
           {/* O CAMPO DE TEXTO DA IMAGEM */}
@@ -74,6 +73,63 @@ export default function HomeScreen() {
           onChangeText={setMaquinaInfo}
         />
       </View>
+
+        <View style={styles.containerEstadoMaterias}>
+          <Text style={styles.titleEstMaq}>Estado dos materiais:</Text>
+          <Text style={styles.SubTitleEstMaq}>Descreva materiais com anomalias, manutenções pendentes ou observações
+        </Text>
+        <TextInput
+          style={styles.inputMultilinha}
+          placeholder="Ex: Parafusos M8 - stock baixo (20% restante) Óleo lubrificante - reabastecer amanhã wsz  Matéria-prima A em quantidade suficiente para os próximos 3 dias"
+          placeholderTextColor="#9CA3AF"
+          multiline={true}
+          numberOfLines={4}
+          textAlignVertical="top"
+          value={maquinaInfo}
+          onChangeText={setMaquinaInfo}
+        />
+        </View>
+
+        <View style={styles.containerIncidentesAnomalias}> 
+          <Text style={styles.titleEstMaq}>Incidentes e anomalias:</Text> 
+  
+          <Text style={styles.SubTitleEstMaq}>
+            Registre qualquer incidente, anomalia ou evento relevante que ocorreu durante o turno. 
+            Seja detalhado para ajudar a próxima equipa a entender o contexto e tomar as ações necessárias.
+          </Text>
+
+          <TextInput
+            style={styles.inputMultilinha}
+            placeholder="Ex: Paragem de 30min às 14h por falha elétrica Produto rejeitado lote #1234 Sem incidentes a reportar"
+            placeholderTextColor="#9CA3AF"
+            multiline={true}
+            numberOfLines={4}
+            textAlignVertical="top"
+            value={maquinaInfo}
+            onChangeText={setMaquinaInfo}
+          />
+        </View>
+
+        <View style={styles.containerNotasAdicionais}>
+          <Text style={styles.titleEstMaq}>Notas adicionais:</Text>
+          <Text style={styles.SubTitleEstMaq}>
+            Use este espaço para registrar qualquer outra informação que considere relevante para a próxima equipa, como sugestões de melhoria, feedback ou observações gerais.
+          </Text>
+          <TextInput
+            style={styles.inputMultilinha}
+            placeholder="Ex: Técnico de manutenção virá amanhã às 10h Pedido urgente #5678 deve ser priorizadoLimpar área de trabalho 2 antes de iniciar o próximo turno"
+            placeholderTextColor="#9CA3AF"
+            multiline={true}
+            numberOfLines={4}
+            textAlignVertical="top"
+            value={maquinaInfo}
+            onChangeText={setMaquinaInfo}
+          />
+        </View>
+
+
+
+
   
     </ScrollView>
   );
@@ -191,5 +247,46 @@ dateText: {
     color: '#374151',
     borderWidth: 1,
     borderColor: '#E5E7EB',
+  },
+
+  // ESTILO DO BLOCO DE ESTADO DOS MATERIAIS
+
+  containerEstadoMaterias: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 20,
+    marginTop: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+
+  // ESTILO DO BLOCO DE INCIDENTES E ANOMALIAS
+
+  containerIncidentesAnomalias: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 20,
+    marginTop: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+
+  // ESTILO DO BLOCO DE NOTAS ADICIONAIS
+  containerNotasAdicionais: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 20,
+    marginTop: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
 });
