@@ -8,7 +8,6 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const [currentDate, setCurrentDate] = useState('');
   
-  // ESTADOS SEPARADOS PARA CADA CAMPO (Resolvido o problema de repetição)
   const [maquinas, setMaquinas] = useState('');
   const [materiais, setMateriais] = useState('');
   const [incidentes, setIncidentes] = useState('');
@@ -32,7 +31,6 @@ export default function HomeScreen() {
   };
 
   const salvarRelatorio = async () => {
-    // Validação: Preencher pelo menos um campo importante
     if (!maquinas && !materiais && !incidentes) {
       Alert.alert("Aviso", "Por favor, preencha as informações do turno antes de guardar.");
       return;
@@ -40,7 +38,7 @@ export default function HomeScreen() {
 
     try {
       const novoRelatorio = {
-        operador: "Emmanuel Cordeiro", 
+        operador: "Emmanuel Cordeiro",
         data: currentDate + " às " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
         turno: getTurno(),
         maquinas: maquinas || 'Nenhuma anomalia relatada',
@@ -52,16 +50,11 @@ export default function HomeScreen() {
       const jsonValue = await AsyncStorage.getItem('@relatorios_turno');
       const historicoExistente = jsonValue ? JSON.parse(jsonValue) : [];
       
-      // Adiciona o novo no topo da lista
       const novoHistorico = [novoRelatorio, ...historicoExistente];
 
       await AsyncStorage.setItem('@relatorios_turno', JSON.stringify(novoHistorico));
 
-      // Limpa os campos após salvar (Reset do formulário)
-      setMaquinas(''); 
-      setMateriais(''); 
-      setIncidentes(''); 
-      setNotas('');
+      setMaquinas(''); setMateriais(''); setIncidentes(''); setNotas('');
 
       Alert.alert("Sucesso", "Relatório guardado com sucesso!", [
         { text: "Ver Histórico", onPress: () => navigation.navigate('Historico') },
@@ -73,32 +66,29 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.containerHomeScreen} showsVerticalScrollIndicator={false}>
-        {/* CABEÇALHO */}
-        <View style={styles.headerHome}>
-          <Text style={styles.titleHome}>Novo Relatório de Turno</Text>
-          <Text style={styles.SubTitleHome}>Registe informações importantes para a próxima equipa</Text>
+    <ScrollView contentContainerStyle={styles.containerHomeScreen} showsVerticalScrollIndicator={false}> 
+        <View style={styles.headerHome}> 
+          <Text style={styles.titleHome}>Novo Relatório de Turno</Text> 
+          <Text style={styles.SubTitleHome}>Registe informações importantes para a próxima equipa</Text> 
         </View>
 
-        {/* INFORMAÇÃO DE TURNO */}
         <View style={styles.divTurno}> 
-          <Feather name="info" size={20} color="#6B7280" style={{ marginRight: 12, marginTop: 4 }} />
-          <View style={styles.containerTextosTurno}>
-            <Text style={styles.TextDivTurno}>Turno atual:</Text>
-            <Text style={styles.labelTurno}>{getTurno()}</Text>
-            <View style={styles.containerData}>
-              <Text style={styles.bullet}>•</Text>
-              <Text style={styles.dateText}>{currentDate}</Text>
+          <Feather name="info" size={20} color="#6B7280" style={{ marginRight: 12, marginTop: 4 }} /> 
+          <View style={styles.containerTextosTurno}> 
+            <Text style={styles.TextDivTurno}>Turno atual:</Text> 
+            <Text style={styles.labelTurno}>{getTurno()}</Text> 
+            <View style={styles.containerData}> 
+              <Text style={styles.bullet}>•</Text> 
+              <Text style={styles.dateText}>{currentDate}</Text> 
             </View>
           </View>
         </View>
 
-        {/* CAMPO: ESTADO DA MÁQUINA */}
-        <View style={styles.containerEstadoMaquina}>
-          <Text style={styles.titleEstMaq}>Estado da máquina:</Text>
+        <View style={styles.containerEstadoMaquina}> 
+          <Text style={styles.titleEstMaq}>Estado da máquina:</Text> 
           <TextInput
             style={styles.inputMultilinha}
-            placeholder="Ex: Máquina 3 apresenta ruído anormal..."
+            placeholder="Ex: Máquina 3 apresenta ruído..."
             placeholderTextColor="#9CA3AF"
             multiline={true}
             numberOfLines={4}
@@ -107,12 +97,11 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* CAMPO: ESTADO DOS MATERIAIS */}
         <View style={styles.containerEstadoMaterias}>
           <Text style={styles.titleEstMaq}>Estado dos materiais:</Text>
           <TextInput
             style={styles.inputMultilinha}
-            placeholder="Ex: Parafusos M8 - stock baixo (20%)..."
+            placeholder="Ex: Parafusos M8 - stock baixo..."
             placeholderTextColor="#9CA3AF"
             multiline={true}
             numberOfLines={4}
@@ -121,12 +110,11 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* CAMPO: INCIDENTES */}
         <View style={styles.containerIncidentesAnomalias}>
           <Text style={styles.titleEstMaq}>Incidentes e anomalias:</Text>
           <TextInput
             style={styles.inputMultilinha}
-            placeholder="Ex: Paragem de 30min às 14h por falha elétrica..."
+            placeholder="Ex: Paragem de 30min às 14h..."
             placeholderTextColor="#9CA3AF"
             multiline={true}
             numberOfLines={4}
@@ -135,12 +123,11 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* CAMPO: NOTAS ADICIONAIS */}
         <View style={styles.containerNotasAdicionais}>
           <Text style={styles.titleEstMaq}>Notas adicionais:</Text>
           <TextInput
             style={styles.inputMultilinha}
-            placeholder="Sugestões de melhoria ou observações gerais..."
+            placeholder="Ex: Técnico de manutenção virá amanhã..."
             placeholderTextColor="#9CA3AF"
             multiline={true}
             numberOfLines={4}
@@ -149,62 +136,91 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* BOTÃO DE AÇÃO */}
         <TouchableOpacity style={styles.btnGuardar} onPress={salvarRelatorio} activeOpacity={0.7}>
-          <Text style={styles.btnTexto}>Guardar Relatório</Text>
+          <Text style={styles.btnTexto}>Guardar Relatório</Text> 
         </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  containerHomeScreen: { paddingBottom: 60, alignItems: 'center', backgroundColor: '#F5F5F5' },
-  headerHome: { width: '100%', padding: 20, marginTop: 10 },
-  titleHome: { fontSize: 24, fontWeight: '900', color: '#000' },
-  SubTitleHome: { fontSize: 14, color: '#6B7280', marginTop: 4 },
-  
-  divTurno: { 
-    width: '90%', 
-    backgroundColor: '#FFF', 
-    borderRadius: 12, 
-    padding: 16, 
-    flexDirection: 'row', 
-    marginTop: 10, 
-    borderWidth: 1, 
+  containerHomeScreen: {
+    paddingBottom: 60,
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5'
+  },
+  headerHome: {
+    width: '100%',
+    padding: 20,
+    marginTop: 10
+  },
+  titleHome: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#000'
+  },
+  SubTitleHome: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 4
+  },
+  divTurno: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    marginTop: 10,
+    borderWidth: 1,
     borderColor: '#E5E7EB',
     elevation: 2
   },
   containerTextosTurno: { flex: 1 },
   TextDivTurno: { fontSize: 14, color: '#6B7280' },
-  labelTurno: { fontSize: 18, fontWeight: '900', color: '#1F2937' },
-  containerData: { flexDirection: 'row', alignItems: 'center' },
-  bullet: { fontSize: 18, color: '#D08700', marginRight: 5 },
+  labelTurno: {
+    fontSize: 18, 
+    fontWeight: '900', 
+    color: '#1F2937'
+  },
+  containerData: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  bullet: {
+    fontSize: 18, 
+    color: '#D08700',
+    marginRight: 5
+  },
   dateText: { fontSize: 14, color: '#6B7280' },
 
-  // Estilo comum para os containers de input
   containerEstadoMaquina: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
   containerEstadoMaterias: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
   containerIncidentesAnomalias: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
   containerNotasAdicionais: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
 
-  titleEstMaq: { fontSize: 16, fontWeight: '700', color: '#1F2937', marginBottom: 12 },
-  inputMultilinha: { 
-    backgroundColor: '#F3F4F6', 
-    borderRadius: 8, 
-    padding: 12, 
-    height: 100, 
-    textAlignVertical: 'top', 
+  titleEstMaq: {
+    fontSize: 16, 
+    fontWeight: '700',
+    color: '#1F2937', 
+    marginBottom: 12
+  },
+  inputMultilinha: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    padding: 12,
+    height: 100,
+    textAlignVertical: 'top',
     color: '#374151',
     borderWidth: 1,
     borderColor: '#E5E7EB'
   },
 
-  btnGuardar: { 
-    backgroundColor: '#D08700', 
-    width: '90%', 
-    padding: 18, 
-    borderRadius: 12, 
-    marginTop: 35, 
+  btnGuardar: {
+    backgroundColor: '#D08700',
+    width: '90%',
+    padding: 18,
+    borderRadius: 12,
+    marginTop: 35,
     alignItems: 'center',
     elevation: 4,
     shadowColor: '#000',
@@ -212,5 +228,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4
   },
-  btnTexto: { color: '#FFF', fontWeight: 'bold', fontSize: 16 }
+  btnTexto: {
+    color: '#FFF', 
+    fontWeight: 'bold', 
+    fontSize: 16 
+  }
 });

@@ -31,6 +31,7 @@ export default function LoginScreen() {
         <View style={styles.iconBox}>
           <AntDesign name="clock-circle" size={36} color="white" />
         </View>
+        
         <Text style={styles.title}>ShiftSync</Text>
         <Text style={styles.subtitle}>Diário de Troca de Turnos</Text>
 
@@ -43,6 +44,7 @@ export default function LoginScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
         />
+
         <TextInput
           style={styles.input}
           placeholder="Senha"
@@ -54,7 +56,11 @@ export default function LoginScreen() {
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handleLogin} 
+          disabled={loading}
+        >
           {loading ? (
             <ActivityIndicator color="white" />
           ) : (

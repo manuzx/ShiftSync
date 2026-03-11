@@ -2,17 +2,21 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native'; // Importar isso
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function HistoricoScreen() {
-  const [relatorios, setRelatorios] = useState([]); 
+  const [relatorios, setRelatorios] = useState([]);
   const [busca, setBusca] = useState('');
 
   const carregarHistorico = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('@relatorios_turno');
-      if (jsonValue != null) setRelatorios(JSON.parse(jsonValue));
-    } catch (e) { console.error(e); }
+      if (jsonValue != null) {
+        setRelatorios(JSON.parse(jsonValue));
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useFocusEffect(
@@ -24,19 +28,22 @@ export default function HistoricoScreen() {
   const excluirRelatorio = async (index) => {
     Alert.alert("Excluir", "Deseja apagar este registro?", [
       { text: "Não" },
-      { text: "Sim", onPress: async () => {
+      { 
+        text: "Sim",
+        onPress: async () => {
           const novaLista = [...relatorios];
           novaLista.splice(index, 1);
           setRelatorios(novaLista);
           await AsyncStorage.setItem('@relatorios_turno', JSON.stringify(novaLista));
-      }}
+        }
+      }
     ]);
   };
 
-  const relatoriosFiltrados = relatorios.filter(item => 
-    item.operador?.toLowerCase().includes(busca.toLowerCase()) ||
-    item.maquinas?.toLowerCase().includes(busca.toLowerCase())
-  );
+  const relatoriosFiltrados = relatorios.filter(item => {
+    return item.operador?.toLowerCase().includes(busca.toLowerCase()) ||
+           item.maquinas?.toLowerCase().includes(busca.toLowerCase());
+  });
 
   const renderItem = ({ item, index }) => (
     <View style={styles.card}>
@@ -49,11 +56,22 @@ export default function HistoricoScreen() {
           <Feather name="trash-2" size={20} color="#EF4444" />
         </TouchableOpacity>
       </View>
-      <Text style={styles.operatorName}><Feather name="user" size={16} /> {item.operador}</Text>
+      
+      <Text style={styles.operatorName}>
+        <Feather name="user" size={16} /> {item.operador}
+      </Text>
+      
       <Text style={styles.label}>Máquinas:</Text>
       <Text style={styles.contentText}>{item.maquinas}</Text>
+      
       <Text style={styles.label}>Materiais:</Text>
       <Text style={styles.contentText}>{item.materiais}</Text>
+
+      <Text style={styles.label}>Incidentes:</Text>
+      <Text style={styles.contentText}>{item.incidentes}</Text>
+
+      <Text style={styles.label}>Notas:</Text>
+      <Text style={styles.contentText}>{item.notas}</Text>
     </View>
   );
 
@@ -61,18 +79,127 @@ export default function HistoricoScreen() {
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Histórico</Text>
+        
         <View style={styles.searchContainer}>
           <Feather name="search" size={18} color="#9CA3AF" />
-          <TextInput placeholder="Pesquisar..." style={styles.searchInput} value={busca} onChangeText={setBusca} />
+          <TextInput 
+            placeholder="Pesquisar..."
+            style={styles.searchInput}
+            value={busca}
+            onChangeText={setBusca}
+          />
         </View>
-        <FlatList 
-            data={relatoriosFiltrados} 
-            renderItem={renderItem} 
+
+        <FlatList
+            data={relatoriosFiltrados}
+            renderItem={renderItem}
             keyExtractor={(_, i) => i.toString()}
-            ListEmptyComponent={<Text style={{textAlign:'center', marginTop:20}}>Nenhum relatório.</Text>}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>Nenhum relatório encontrado.</Text>
+            }
         />
       </View>
     </View>
   );
 }
-// ... mantenha os estilos que você já tem
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#1F2937',
+    marginBottom: 15,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    height: 45,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginBottom: 20,
+    elevation: 2,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#374151',
+  },
+  card: {
+    backgroundColor: '#FFF',
+    borderRadius: 15,
+    padding: 16,
+    marginBottom: 15,
+    borderLeftWidth: 5,
+    borderLeftColor: '#D08700',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  badgeManha: {
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#D08700',
+  },
+  dateText: {
+    fontSize: 12, 
+    color: '#6B7280',
+    flex: 1,
+    marginLeft: 10,
+  },
+  operatorName: {
+    fontSize: 15, 
+    fontWeight: '700',
+    color: '#374151', 
+    marginBottom: 12,
+    backgroundColor: '#F3F4F6',
+    padding: 6,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+  },
+  label: {
+    fontSize: 13, 
+    fontWeight: 'bold', 
+    color: '#6B7280', 
+    marginTop: 5,
+    textTransform: 'uppercase',
+  },
+  contentText: {
+    fontSize: 14, 
+    color: '#1F2937', 
+    marginBottom: 8,
+    lineHeight: 20,
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 40,
+    fontSize: 16, 
+    color: '#9CA3AF',
+  }
+});
