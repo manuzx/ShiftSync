@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
-  ScrollView, 
-  SafeAreaView 
-} from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 
 export default function SettingsScreen() {
   const [selectedShift, setSelectedShift] = useState('Manhã');

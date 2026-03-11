@@ -175,8 +175,13 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     elevation: 2
   },
-  containerTextosTurno: { flex: 1 },
-  TextDivTurno: { fontSize: 14, color: '#6B7280' },
+  containerTextosTurno: {
+    flex: 1 
+  },
+  TextDivTurno: {
+    fontSize: 14,
+    color: '#6B7280' 
+  },
   labelTurno: {
     fontSize: 18, 
     fontWeight: '900', 
@@ -191,12 +196,43 @@ const styles = StyleSheet.create({
     color: '#D08700',
     marginRight: 5
   },
-  dateText: { fontSize: 14, color: '#6B7280' },
+  dateText: { 
+    fontSize: 14,
+    color: '#6B7280' 
+  },
 
-  containerEstadoMaquina: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
-  containerEstadoMaterias: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
-  containerIncidentesAnomalias: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
-  containerNotasAdicionais: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
+  containerEstadoMaquina: { 
+     width: '90%',
+     backgroundColor: '#FFF', 
+     borderRadius: 10, 
+     padding: 18, 
+     marginTop: 20, 
+     elevation: 3 
+  },
+  containerEstadoMaterias: { 
+    width: '90%',
+    backgroundColor: '#FFF', 
+    borderRadius: 10, 
+    padding: 18, 
+    marginTop: 20, 
+    elevation: 3 
+  },
+  containerIncidentesAnomalias: {
+    width: '90%', 
+    backgroundColor: '#FFF', 
+    borderRadius: 10, 
+    padding: 18, 
+    marginTop: 20, 
+    elevation: 3 
+  },
+  containerNotasAdicionais: { 
+    width: '90%', 
+    backgroundColor: '#FFF',
+    borderRadius: 10, 
+    padding: 18, 
+    marginTop: 20, 
+    elevation: 3 
+  },
 
   titleEstMaq: {
     fontSize: 16, 
