@@ -13,8 +13,8 @@ export function AuthProvider({ children }) {
   // 2. Função auxiliar para mapear turnos em cores
   const getCorPorTurno = (turno) => {
     switch (turno) {
-      case 'Manhã': return '#D08700';
-      case 'Tarde': return '#0284C7';
+      case 'Manhã': return '#ffe600';
+      case 'Tarde': return '#ffaa00';
       case 'Noite': return '#4F46E5';
       default: return '#D08700';
     }

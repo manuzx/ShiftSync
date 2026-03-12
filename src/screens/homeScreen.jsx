@@ -19,6 +19,10 @@ export default function HomeScreen() {
   // PUXANDO A COR GLOBAL DO TEMA
   const { themeColor } = useAuth();
 
+  // Lógica de Contraste Inteligente para a Manhã
+  const isMorning = themeColor === '#D08700';
+  const contrastColor = isMorning ? '#1F2937' : '#FFFFFF';
+
   const [currentDate, setCurrentDate] = useState('');
   const [nomeUsuario, setNomeUsuario] = useState('Operador');
   const [turnoAtual, setTurnoAtual] = useState('');
@@ -123,7 +127,7 @@ export default function HomeScreen() {
                 <Text style={styles.SubTitleHome}>Registe informações para a próxima equipe</Text> 
               </View>
 
-              {/* Card de Turno com Ícone e Bullet Dinâmicos */}
+              {/* Card de Turno */}
               <View style={styles.divTurno}> 
                 <Feather name="clock" size={20} color={themeColor} style={{ marginRight: 12, marginTop: 4 }} /> 
                 <View style={styles.containerTextosTurno}> 
@@ -136,7 +140,6 @@ export default function HomeScreen() {
                 </View>
               </View>
 
-              {/* ... Campos de Input permanecem iguais ... */}
               <View style={styles.containerIndMaq}>
                 <Text style={styles.titleIndMaq}>Identificação da Máquina</Text>
                 <TextInput 
@@ -184,13 +187,13 @@ export default function HomeScreen() {
                 />
               </View>
 
-              {/* BOTÃO COM COR DINÂMICA */}
+              {/* BOTÃO COM COR DINÂMICA E TEXTO INTELIGENTE */}
               <TouchableOpacity 
                 style={[styles.btnGuardar, { backgroundColor: themeColor }]} 
                 onPress={salvarRelatorio} 
                 activeOpacity={0.7}
               >
-                <Text style={styles.btnTexto}>Guardar Relatório</Text> 
+                <Text style={[styles.btnTexto, { color: contrastColor }]}>Guardar Relatório</Text> 
               </TouchableOpacity>
           </ScrollView>
         </TouchableWithoutFeedback>
@@ -220,5 +223,5 @@ const styles = StyleSheet.create({
   titleEstMaq: { fontSize: 16, fontWeight: '700', color: '#1F2937', marginBottom: 12 },
   inputMultilinha: { backgroundColor: '#F3F4F6', borderRadius: 8, padding: 12, height: 100, textAlignVertical: 'top', color: '#374151', borderWidth: 1, borderColor: '#E5E7EB' },
   btnGuardar: { width: '90%', padding: 18, borderRadius: 12, marginTop: 35, marginBottom: 20, alignItems: 'center', elevation: 4 },
-  btnTexto: { color: '#FFF', fontWeight: 'bold', fontSize: 16, textTransform: 'uppercase' },
+  btnTexto: { fontWeight: 'bold', fontSize: 16, textTransform: 'uppercase' },
 });
