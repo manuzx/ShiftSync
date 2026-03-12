@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [currentDate, setCurrentDate] = useState('');
+  const [nomeUsuario, setNomeUsuario] = useState('Operador'); 
   
-  const [maquinas, setMaquinas] = useState('');
+  const [identificacaoMaq, setIdentificacaoMaq] = useState(''); // Estado único para ID
+  const [maquinas, setMaquinas] = useState(''); // Relato de estado
   const [materiais, setMateriais] = useState('');
   const [incidentes, setIncidentes] = useState('');
   const [notas, setNotas] = useState('');
@@ -23,6 +25,16 @@ export default function HomeScreen() {
     return () => clearInterval(timer);
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      const carregarNome = async () => {
+        const nomeSalvo = await AsyncStorage.getItem('@user_name');
+        if (nomeSalvo) setNomeUsuario(nomeSalvo);
+      };
+      carregarNome();
+    }, [])
+  );
+
   const getTurno = () => {
     const hora = new Date().getHours();
     if (hora >= 5 && hora < 13) return 'Manhã';
@@ -31,16 +43,17 @@ export default function HomeScreen() {
   };
 
   const salvarRelatorio = async () => {
-    if (!maquinas && !materiais && !incidentes) {
+    if (!identificacaoMaq && !maquinas && !materiais && !incidentes) {
       Alert.alert("Aviso", "Por favor, preencha as informações do turno antes de guardar.");
       return;
     }
 
     try {
       const novoRelatorio = {
-        operador: "Emmanuel Cordeiro",
+        operador: nomeUsuario,
         data: currentDate + " às " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
         turno: getTurno(),
+        indMaq: identificacaoMaq || 'Não identificada',
         maquinas: maquinas || 'Nenhuma anomalia relatada',
         materiais: materiais || 'Estoque normal',
         incidentes: incidentes || 'Sem incidentes',
@@ -51,25 +64,25 @@ export default function HomeScreen() {
       const historicoExistente = jsonValue ? JSON.parse(jsonValue) : [];
       
       const novoHistorico = [novoRelatorio, ...historicoExistente];
-
       await AsyncStorage.setItem('@relatorios_turno', JSON.stringify(novoHistorico));
 
-      setMaquinas(''); setMateriais(''); setIncidentes(''); setNotas('');
+      // Reset de todos os campos
+      setIdentificacaoMaq(''); setMaquinas(''); setMateriais(''); setIncidentes(''); setNotas('');
 
-      Alert.alert("Sucesso", "Relatório guardado com sucesso!", [
+      Alert.alert("Sucesso", "Relatório guardado!", [
         { text: "Ver Histórico", onPress: () => navigation.navigate('Historico') },
         { text: "Novo", style: "cancel" }
       ]);
     } catch (e) {
-      Alert.alert("Erro", "Falha ao guardar os dados no dispositivo.");
+      Alert.alert("Erro", "Falha ao guardar os dados.");
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.containerHomeScreen} showsVerticalScrollIndicator={false}> 
         <View style={styles.headerHome}> 
-          <Text style={styles.titleHome}>Novo Relatório de Turno</Text> 
-          <Text style={styles.SubTitleHome}>Registe informações importantes para a próxima equipa</Text> 
+          <Text style={styles.titleHome}>Olá, {nomeUsuario}</Text> 
+          <Text style={styles.SubTitleHome}>Registe informações para a próxima equipa</Text> 
         </View>
 
         <View style={styles.divTurno}> 
@@ -84,14 +97,26 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        <View style={styles.containerIndMaq}>
+          <Text style={styles.titleIndMaq}>Identificação da Máquina</Text>
+          <Text style={styles.subtitleIndMaq}>Qual equipamento você operou?</Text>
+          <TextInput 
+            style={styles.inputIndMaq} 
+            placeholder="Ex: Máquina 3"
+            placeholderTextColor="#9CA3AF"
+            value={identificacaoMaq}
+            onChangeText={setIdentificacaoMaq}
+          />
+        </View>
+
         <View style={styles.containerEstadoMaquina}> 
           <Text style={styles.titleEstMaq}>Estado da máquina:</Text> 
           <TextInput
             style={styles.inputMultilinha}
-            placeholder="Ex: Máquina 3 apresenta ruído..."
+            placeholder="Ex: apresenta ruído anormal no motor requer calibração urgente
+Todas as outras operacionais"
             placeholderTextColor="#9CA3AF"
             multiline={true}
-            numberOfLines={4}
             value={maquinas}
             onChangeText={setMaquinas}
           />
@@ -101,10 +126,11 @@ export default function HomeScreen() {
           <Text style={styles.titleEstMaq}>Estado dos materiais:</Text>
           <TextInput
             style={styles.inputMultilinha}
-            placeholder="Ex: Parafusos M8 - stock baixo..."
+            placeholder="Ex: Parafusos M8 - stock baixo (20% restante)
+Óleo lubrificante - reabastecer amanhã
+Matéria-prima A em quantidade suficiente"
             placeholderTextColor="#9CA3AF"
             multiline={true}
-            numberOfLines={4}
             value={materiais}
             onChangeText={setMateriais}
           />
@@ -114,10 +140,11 @@ export default function HomeScreen() {
           <Text style={styles.titleEstMaq}>Incidentes e anomalias:</Text>
           <TextInput
             style={styles.inputMultilinha}
-            placeholder="Ex: Paragem de 30min às 14h..."
+            placeholder="Ex: Paragem de 30min às 14h por falha elétrica
+Produto rejeitado lote #1234
+Sem incidentes a reportar"
             placeholderTextColor="#9CA3AF"
             multiline={true}
-            numberOfLines={4}
             value={incidentes}
             onChangeText={setIncidentes}
           />
@@ -127,10 +154,11 @@ export default function HomeScreen() {
           <Text style={styles.titleEstMaq}>Notas adicionais:</Text>
           <TextInput
             style={styles.inputMultilinha}
-            placeholder="Ex: Técnico de manutenção virá amanhã..."
+            placeholder="Ex: Técnico de manutenção virá amanhã às 10h
+Pedido urgente #5678 deve ser priorizado
+Limpar área de trabalho 2 antes de iniciar turno"
             placeholderTextColor="#9CA3AF"
             multiline={true}
-            numberOfLines={4}
             value={notas}
             onChangeText={setNotas}
           />
@@ -144,26 +172,29 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  // Layout Principal
   containerHomeScreen: {
     paddingBottom: 60,
     alignItems: 'center',
-    backgroundColor: '#F5F5F5'
+    backgroundColor: '#F5F5F5',
   },
   headerHome: {
     width: '100%',
     padding: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   titleHome: {
     fontSize: 24,
     fontWeight: '900',
-    color: '#000'
+    color: '#000',
   },
   SubTitleHome: {
     fontSize: 14,
     color: '#6B7280',
-    marginTop: 4
+    marginTop: 4,
   },
+
+  // Cards de Informação (Turno e Identificação)
   divTurno: {
     width: '90%',
     backgroundColor: '#FFF',
@@ -173,84 +204,124 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    elevation: 2
+    elevation: 2,
+    // Sombra para iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
+  containerIndMaq: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    elevation: 2,
+  },
+
+  // Conteúdo Interno do Turno
   containerTextosTurno: {
-    flex: 1 
+    flex: 1,
   },
   TextDivTurno: {
     fontSize: 14,
-    color: '#6B7280' 
+    color: '#6B7280',
   },
   labelTurno: {
-    fontSize: 18, 
-    fontWeight: '900', 
-    color: '#1F2937'
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#1F2937',
   },
   containerData: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   bullet: {
-    fontSize: 18, 
+    fontSize: 18,
     color: '#D08700',
-    marginRight: 5
+    marginRight: 5,
   },
-  dateText: { 
+  dateText: {
     fontSize: 14,
-    color: '#6B7280' 
+    color: '#6B7280',
   },
 
-  containerEstadoMaquina: { 
-     width: '90%',
-     backgroundColor: '#FFF', 
-     borderRadius: 10, 
-     padding: 18, 
-     marginTop: 20, 
-     elevation: 3 
+  // Textos de Identificação
+  titleIndMaq: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
   },
-  containerEstadoMaterias: { 
+  subtitleIndMaq: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 10,
+  },
+  inputIndMaq: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    padding: 12,
+    color: '#374151',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+
+  // Containers dos Formulários (Padronizados)
+  containerEstadoMaquina: {
     width: '90%',
-    backgroundColor: '#FFF', 
-    borderRadius: 10, 
-    padding: 18, 
-    marginTop: 20, 
-    elevation: 3 
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 18,
+    marginTop: 20,
+    elevation: 3,
+  },
+  containerEstadoMaterias: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 18,
+    marginTop: 20,
+    elevation: 3,
   },
   containerIncidentesAnomalias: {
-    width: '90%', 
-    backgroundColor: '#FFF', 
-    borderRadius: 10, 
-    padding: 18, 
-    marginTop: 20, 
-    elevation: 3 
-  },
-  containerNotasAdicionais: { 
-    width: '90%', 
+    width: '90%',
     backgroundColor: '#FFF',
-    borderRadius: 10, 
-    padding: 18, 
-    marginTop: 20, 
-    elevation: 3 
+    borderRadius: 10,
+    padding: 18,
+    marginTop: 20,
+    elevation: 3,
+  },
+  containerNotasAdicionais: {
+    width: '90%',
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 18,
+    marginTop: 20,
+    elevation: 3,
   },
 
+  // Títulos e Inputs do Formulário
   titleEstMaq: {
-    fontSize: 16, 
+    fontSize: 16,
     fontWeight: '700',
-    color: '#1F2937', 
-    marginBottom: 12
+    color: '#1F2937',
+    marginBottom: 12,
   },
   inputMultilinha: {
     backgroundColor: '#F3F4F6',
     borderRadius: 8,
     padding: 12,
-    height: 100,
+    height: 100, // Aumentei um pouco para facilitar a escrita
     textAlignVertical: 'top',
     color: '#374151',
     borderWidth: 1,
-    borderColor: '#E5E7EB'
+    borderColor: '#E5E7EB',
   },
 
+  // Botão Salvar
   btnGuardar: {
     backgroundColor: '#D08700',
     width: '90%',
@@ -259,14 +330,15 @@ const styles = StyleSheet.create({
     marginTop: 35,
     alignItems: 'center',
     elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4
+    shadowColor: '#D08700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   btnTexto: {
-    color: '#FFF', 
-    fontWeight: 'bold', 
-    fontSize: 16 
-  }
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+    textTransform: 'uppercase', // Deixa o botão mais imponente
+  },
 });

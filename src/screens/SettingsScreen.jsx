@@ -1,52 +1,95 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SettingsScreen() {
+  const [nome, setNome] = useState('');
+  const [posicao, setPosicao] = useState('');
   const [selectedShift, setSelectedShift] = useState('Manhã');
+
+  useEffect(() => {
+    const carregarDados = async () => {
+      const nomeSalvo = await AsyncStorage.getItem('@user_name');
+      if (nomeSalvo) setNome(nomeSalvo);
+    };
+    carregarDados();
+  }, []);
+
+  const salvarConfiguracoes = async () => {
+    if (!nome.trim()) {
+      Alert.alert("Erro", "O nome do operador não pode estar vazio.");
+      return;
+    }
+
+    try {
+      await AsyncStorage.setItem('@user_name', nome);
+      Alert.alert("Sucesso", "Configurações guardadas com sucesso!");
+    } catch (e) {
+      Alert.alert("Erro", "Falha ao salvar configurações.");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      
-      {}
       <View style={styles.headerHome}>
-        <Text style={styles.textHome}>Tela Novo Configurações</Text>
+        <Text style={styles.textHome}>Ajustes do Perfil</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>Configurações</Text>
-        <Text style={styles.subtitle}>Configure o seu turno atual e informações pessoais</Text>
+        <Text style={styles.subtitle}>Mantenha seus dados de turno atualizados</Text>
 
-        {/* Card de Informações */}
         <View style={styles.card}>
           <Text style={styles.label}>Nome do Operador</Text>
-          <TextInput style={styles.input} placeholder="Digite o seu nome" />
+          <TextInput 
+            style={styles.input} 
+            placeholder="Ex: Emmanuel Cordeiro" 
+            placeholderTextColor="#9CA3AF"
+            value={nome}
+            onChangeText={setNome}
+          />
           
-          <Text style={styles.label}>Posição do Operador</Text>
-          <TextInput style={styles.input} placeholder="Digite a sua posição" />
+          <Text style={styles.label}>Posição / Cargo</Text>
+          <TextInput 
+            style={styles.input} 
+            placeholder="Ex: Técnico de Sistemas" 
+            placeholderTextColor="#9CA3AF"
+            value={posicao}
+            onChangeText={setPosicao}
+          />
           
-          <Text style={styles.label}>Setor do Operador</Text>
-          <TextInput style={styles.input} placeholder="Digite o seu setor" />
-          
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Guardar Nome</Text>
+          <TouchableOpacity 
+            style={styles.saveButton} 
+            onPress={salvarConfiguracoes}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.saveButtonText}>Guardar Alterações</Text>
           </TouchableOpacity>
         </View>
 
-        {}
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Turno Atual</Text>
-          <Text style={styles.description}>Selecione o turno em que está a trabalhar atualmente</Text>
-          
+          <Text style={styles.sectionTitle}>Selecione seu Turno</Text>
           <View style={styles.shiftContainer}>
-            {['Manhã', 'Tarde', 'Noite'].map((shift) => (
-              <TouchableOpacity 
-                key={shift}
-                style={[styles.shiftOption, selectedShift === shift && styles.shiftSelected]}
-                onPress={() => setSelectedShift(shift)}
-              >
-                <Text style={styles.shiftText}>{shift}</Text>
-              </TouchableOpacity>
-            ))}
+            {['Manhã', 'Tarde', 'Noite'].map((shift) => {
+              const isSelected = selectedShift === shift;
+              return (
+                <TouchableOpacity 
+                  key={shift}
+                  style={[
+                    styles.shiftOption, 
+                    isSelected && styles.shiftSelected
+                  ]}
+                  onPress={() => setSelectedShift(shift)}
+                >
+                  <Text style={[
+                    styles.shiftText, 
+                    isSelected && styles.shiftTextSelected
+                  ]}>
+                    {shift}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
       </ScrollView>
@@ -55,30 +98,102 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FEFCE8' },
-  
-  
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
   headerHome: {
     padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FEFCE8', 
+    marginTop: 10,
   },
-  textHome: { fontSize: 18, color: '#333', fontWeight: 'bold' },
-
-  
-  scroll: { padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 5 },
-  subtitle: { color: '#666', marginBottom: 20 },
-  card: { backgroundColor: '#FFF', padding: 20, borderRadius: 12, marginBottom: 20 },
-  label: { fontWeight: '600', marginBottom: 8 },
-  input: { backgroundColor: '#F5F5F5', padding: 12, borderRadius: 8, marginBottom: 15 },
-  saveButton: { backgroundColor: '#000', padding: 15, borderRadius: 8, alignItems: 'center' },
-  saveButtonText: { color: '#FFF', fontWeight: 'bold' },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold' },
-  description: { color: '#666', marginVertical: 10 },
-  shiftContainer: { flexDirection: 'row', justifyContent: 'space-between' },
-  shiftOption: { flex: 1, padding: 15, borderWidth: 1, borderColor: '#DDD', borderRadius: 8, marginHorizontal: 5, alignItems: 'center' },
-  shiftSelected: { borderColor: '#EAB308', backgroundColor: '#FFFBEB' },
-  shiftText: { fontWeight: '600' }
+  textHome: {
+    fontSize: 18,
+    color: '#1F2937',
+    fontWeight: 'bold',
+  },
+  scroll: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#1F2937',
+  },
+  subtitle: {
+    color: '#6B7280',
+    marginBottom: 20,
+  },
+  card: {
+    backgroundColor: '#FFF',
+    padding: 20,
+    borderRadius: 15,
+    marginBottom: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: '#F3F4F6',
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    color: '#1F2937',
+  },
+  saveButton: {
+    backgroundColor: '#D08700',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  saveButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#1F2937',
+    marginBottom: 15,
+  },
+  shiftContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  shiftOption: {
+    flex: 1,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    marginHorizontal: 4,
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+  },
+  shiftSelected: {
+    borderColor: '#D08700',
+    backgroundColor: '#FFFBEB',
+  },
+  shiftText: {
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  shiftTextSelected: {
+    color: '#D08700',
+  },
 });

@@ -11,45 +11,37 @@ export default function HistoricoScreen() {
   const carregarHistorico = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('@relatorios_turno');
-      if (jsonValue != null) {
-        setRelatorios(JSON.parse(jsonValue));
-      }
-    } catch (e) {
-      console.error(e);
-    }
+      if (jsonValue != null) setRelatorios(JSON.parse(jsonValue));
+    } catch (e) { console.error(e); }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      carregarHistorico();
-    }, [])
-  );
+  useFocusEffect(useCallback(() => { carregarHistorico(); }, []));
 
   const excluirRelatorio = async (index) => {
     Alert.alert("Excluir", "Deseja apagar este registro?", [
       { text: "Não" },
-      { 
-        text: "Sim",
-        onPress: async () => {
+      { text: "Sim", onPress: async () => {
           const novaLista = [...relatorios];
           novaLista.splice(index, 1);
           setRelatorios(novaLista);
           await AsyncStorage.setItem('@relatorios_turno', JSON.stringify(novaLista));
-        }
-      }
+      }}
     ]);
   };
 
   const relatoriosFiltrados = relatorios.filter(item => {
-    return item.operador?.toLowerCase().includes(busca.toLowerCase()) ||
-           item.maquinas?.toLowerCase().includes(busca.toLowerCase());
+    return (
+      item.operador?.toLowerCase().includes(busca.toLowerCase()) ||
+      item.maquinas?.toLowerCase().includes(busca.toLowerCase()) ||
+      item.indMaq?.toLowerCase().includes(busca.toLowerCase())
+    );
   });
 
   const renderItem = ({ item, index }) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
-        <View style={styles.badgeManha}>
-          <Text style={styles.badgeText}>☀️ {item.turno}</Text>
+        <View style={styles.badgeTurno}>
+          <Text style={styles.badgeText}>📅 {item.turno}</Text>
         </View>
         <Text style={styles.dateText}>{item.data}</Text>
         <TouchableOpacity onPress={() => excluirRelatorio(index)}>
@@ -60,8 +52,11 @@ export default function HistoricoScreen() {
       <Text style={styles.operatorName}>
         <Feather name="user" size={16} /> {item.operador}
       </Text>
+
+      <Text style={styles.label}>Identificação da Máquina:</Text>
+      <Text style={styles.machineIdText}>{item.indMaq}</Text>
       
-      <Text style={styles.label}>Máquinas:</Text>
+      <Text style={styles.label}>Relato Técnico:</Text>
       <Text style={styles.contentText}>{item.maquinas}</Text>
       
       <Text style={styles.label}>Materiais:</Text>
@@ -79,24 +74,15 @@ export default function HistoricoScreen() {
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Histórico</Text>
-        
         <View style={styles.searchContainer}>
           <Feather name="search" size={18} color="#9CA3AF" />
-          <TextInput 
-            placeholder="Pesquisar..."
-            style={styles.searchInput}
-            value={busca}
-            onChangeText={setBusca}
-          />
+          <TextInput placeholder="Pesquisar..." style={styles.searchInput} value={busca} onChangeText={setBusca} />
         </View>
-
         <FlatList
             data={relatoriosFiltrados}
             renderItem={renderItem}
             keyExtractor={(_, i) => i.toString()}
-            ListEmptyComponent={
-              <Text style={styles.emptyText}>Nenhum relatório encontrado.</Text>
-            }
+            ListEmptyComponent={<Text style={styles.emptyText}>Nenhum relatório encontrado.</Text>}
         />
       </View>
     </View>
@@ -104,6 +90,7 @@ export default function HistoricoScreen() {
 }
 
 const styles = StyleSheet.create({
+  // Container Principal
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
@@ -113,6 +100,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
   },
+
+  // Cabeçalho e Busca
   title: {
     fontSize: 24,
     fontWeight: '900',
@@ -130,6 +119,11 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     marginBottom: 20,
     elevation: 2,
+    // Sombra para iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   searchInput: {
     flex: 1,
@@ -137,6 +131,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#374151',
   },
+
+  // Estilização do Card
   card: {
     backgroundColor: '#FFF',
     borderRadius: 15,
@@ -145,6 +141,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 5,
     borderLeftColor: '#D08700',
     elevation: 3,
+    // Sombra para iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -156,7 +153,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
   },
-  badgeManha: {
+
+  // Badges e Informações de Topo
+  badgeTurno: {
     backgroundColor: '#FEF3C7',
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -168,38 +167,49 @@ const styles = StyleSheet.create({
     color: '#D08700',
   },
   dateText: {
-    fontSize: 12, 
+    fontSize: 12,
     color: '#6B7280',
     flex: 1,
     marginLeft: 10,
   },
   operatorName: {
-    fontSize: 15, 
+    fontSize: 14,
     fontWeight: '700',
-    color: '#374151', 
+    color: '#374151',
     marginBottom: 12,
     backgroundColor: '#F3F4F6',
     padding: 6,
     borderRadius: 6,
     alignSelf: 'flex-start',
   },
+
+  // Textos e Labels do Relatório
   label: {
-    fontSize: 13, 
-    fontWeight: 'bold', 
-    color: '#6B7280', 
-    marginTop: 5,
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#9CA3AF',
+    marginTop: 8,
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  machineIdText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#D08700',
+    marginBottom: 5,
   },
   contentText: {
-    fontSize: 14, 
-    color: '#1F2937', 
-    marginBottom: 8,
+    fontSize: 14,
+    color: '#1F2937',
+    marginBottom: 4,
     lineHeight: 20,
   },
+
+  // Estado Vazio
   emptyText: {
     textAlign: 'center',
     marginTop: 40,
-    fontSize: 16, 
+    fontSize: 16,
     color: '#9CA3AF',
-  }
+  },
 });

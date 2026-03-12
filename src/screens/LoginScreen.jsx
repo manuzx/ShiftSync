@@ -1,73 +1,134 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  ActivityIndicator, 
+  Alert, 
+  KeyboardAvoidingView, 
+  Platform, 
+  ScrollView, 
+  TouchableWithoutFeedback, 
+  Keyboard 
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
+import Feather from "@expo/vector-icons/Feather";
 
 export default function LoginScreen() {
+  const navigation = useNavigation();
   const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleLogin() {
     if (!email.trim() || !password.trim()) {
-      setError("Preencha todos os campos.");
+      Alert.alert("Aviso", "Por favor, preencha todos os campos.");
       return;
     }
-    setError("");
+
     setLoading(true);
-    const success = await login(email.trim(), password);
-    setLoading(false);
-    if (!success) {
-      setError("E-mail ou senha inválidos.");
+
+    try {
+      // 1. O login atualiza o estado global no AuthContext
+      await login(email, password);
+      
+      // 2. IMPORTANTE: Não usamos navigation.replace("Home") aqui.
+      // No seu App.js, o Navigator vai detectar que o 'user' não é mais null
+      // e vai te levar para a Home automaticamente.
+      
+    } catch (error) {
+      Alert.alert("Erro de Acesso", error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.card}>
-        <View style={styles.iconBox}>
-          <AntDesign name="clock-circle" size={36} color="white" />
-        </View>
-        
-        <Text style={styles.title}>ShiftSync</Text>
-        <Text style={styles.subtitle}>Diário de Troca de Turnos</Text>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView 
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.content}>
+              
+              <View style={styles.header}>
+                <View style={styles.logoCircle}>
+                  <Text style={styles.logoText}>S</Text>
+                </View>
+                <Text style={styles.title}>ShiftSync</Text>
+                <Text style={styles.subtitle}>Gestão de turnos simplificada</Text>
+              </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>Bem-vindo</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          placeholderTextColor="#999"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+                <TextInput
+                  style={styles.input}
+                  placeholder="E-mail"
+                  placeholderTextColor="#999"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.inputPassword}
+                    placeholder="Senha"
+                    placeholderTextColor="#999"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                  />
+                  <TouchableOpacity 
+                    style={styles.eyeIcon} 
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    <Feather 
+                      name={showPassword ? "eye" : "eye-off"} 
+                      size={22} 
+                      color="#6B7280" 
+                    />
+                  </TouchableOpacity>
+                </View>
 
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={handleLogin} 
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.buttonText}>Entrar</Text>
-          )}
-        </TouchableOpacity>
-      </View>
+                <TouchableOpacity 
+                  style={styles.button} 
+                  onPress={handleLogin} 
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text style={styles.buttonText}>Entrar</Text>
+                  )}
+                </TouchableOpacity>
+
+                <View style={styles.footerLinks}>
+                  <Text style={styles.footerText}>Não tem uma conta?</Text>
+                  <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                    <Text style={styles.linkText}> Cadastre-se aqui</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -76,67 +137,126 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  content: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
   },
-  card: {
-    width: "88%",
-    backgroundColor: "white",
-    borderRadius: 16,
-    padding: 28,
+  header: {
     alignItems: "center",
-    elevation: 4,
+    marginBottom: 40,
   },
-  iconBox: {
-    width: 70,
-    height: 70,
+  logoCircle: {
+    width: 80,
+    height: 80,
     backgroundColor: "#D08700",
-    borderRadius: 16,
-    alignItems: "center",
+    borderRadius: 40,
     justifyContent: "center",
-    marginBottom: 14,
+    alignItems: "center",
+    elevation: 5,
+    marginBottom: 15,
+  },
+  logoText: {
+    color: "white",
+    fontSize: 40,
+    fontWeight: "900",
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: "900",
-    color: "#3d2800",
-    marginBottom: 2,
+    color: "#1F2937",
   },
   subtitle: {
-    fontSize: 13,
-    color: "#666",
-    marginBottom: 28,
+    fontSize: 14,
+    color: "#6B7280",
+  },
+  card: {
+    width: "100%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 25,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#374151",
+    marginBottom: 20,
+    textAlign: "center",
   },
   input: {
     width: "100%",
-    height: 50,
-    borderWidth: 1.5,
-    borderColor: "#e0e0e0",
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    fontSize: 15,
-    color: "#333",
-    marginBottom: 12,
-    backgroundColor: "#fafafa",
+    height: 55,
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    marginBottom: 15,
+    color: "#1F2937",
   },
-  error: {
-    color: "#c0392b",
-    fontSize: 13,
-    marginBottom: 10,
-    alignSelf: "flex-start",
+  passwordContainer: {
+    width: "100%",
+    height: 55,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 12,
+    marginBottom: 15,
+  },
+  inputPassword: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 15,
+    fontSize: 16,
+    color: "#1F2937",
+  },
+  eyeIcon: {
+    paddingHorizontal: 15,
   },
   button: {
     width: "100%",
-    height: 50,
+    height: 55,
     backgroundColor: "#D08700",
-    borderRadius: 10,
-    alignItems: "center",
+    borderRadius: 12,
     justifyContent: "center",
-    marginTop: 6,
+    alignItems: "center",
+    marginTop: 10,
+    elevation: 2,
   },
   buttonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  footerLinks: {
+    flexDirection: "row",
+    marginTop: 25,
+    justifyContent: "center",
+  },
+  footerText: {
+    color: "#6B7280",
+    fontSize: 14,
+  },
+  linkText: {
+    color: "#D08700",
+    fontSize: 14,
     fontWeight: "700",
   },
 });
