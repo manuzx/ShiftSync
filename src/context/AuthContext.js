@@ -6,14 +6,33 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // 1. Estado para armazenar a cor do tema globalmente
+  const [themeColor, setThemeColor] = useState('#D08700'); 
 
-  // Carrega os dados salvos assim que o App abre
+  // 2. Função auxiliar para mapear turnos em cores
+  const getCorPorTurno = (turno) => {
+    switch (turno) {
+      case 'Manhã': return '#D08700';
+      case 'Tarde': return '#0284C7';
+      case 'Noite': return '#4F46E5';
+      default: return '#D08700';
+    }
+  };
+
   useEffect(() => {
     async function loadStorageData() {
       try {
         const stored = await AsyncStorage.getItem("@user_data");
+        const storedTurno = await AsyncStorage.getItem("@user_shift");
+
         if (stored) {
           setUser(JSON.parse(stored));
+        }
+        
+        // 3. Ao abrir o app, recupera a cor do último turno salvo
+        if (storedTurno) {
+          setThemeColor(getCorPorTurno(storedTurno));
         }
       } catch (error) {
         console.error("Erro ao carregar dados do storage", error);
@@ -24,39 +43,34 @@ export function AuthProvider({ children }) {
     loadStorageData();
   }, []);
 
-  /**
-   * Função de Login
-   * Agora ela verifica tanto o Admin fixo quanto o usuário 
-   * que você cadastrou na RegisterScreen.
-   */
+  // 4. ESSA É A FUNÇÃO QUE ESTAVA FALTANDO NO SEU ARQUIVO
+  async function atualizarTurnoGlobal(novoTurno) {
+    try {
+      const novaCor = getCorPorTurno(novoTurno);
+      setThemeColor(novaCor);
+      await AsyncStorage.setItem("@user_shift", novoTurno);
+    } catch (e) {
+      console.error("Erro ao atualizar tema", e);
+    }
+  }
+
   async function login(email, password) {
     if (!email || !password) {
       throw new Error("Por favor, preencha todos os campos.");
     }
 
     try {
-      // Buscamos os dados que foram gravados no AsyncStorage pela RegisterScreen
       const registeredEmail = await AsyncStorage.getItem("@user_email");
       const registeredName = await AsyncStorage.getItem("@user_name");
-
-      // Verificação 1: É o Administrador padrão?
       const isAdmin = email.toLowerCase() === "admin@gmail.com" && password === "12345";
-
-      // Verificação 2: É o usuário que se registrou no celular?
-      // (Aqui comparamos o e-mail digitado com o e-mail salvo no registro)
       const isUserMatch = registeredEmail && email.toLowerCase() === registeredEmail.toLowerCase();
 
       if (isAdmin || isUserMatch) {
-        // Montamos o objeto do usuário com os dados corretos
         const userData = {
           email: email.toLowerCase(),
           nome: isUserMatch ? registeredName : "Administrador",
         };
-
-        // Salvamos o objeto completo para o useEffect ler na próxima vez que abrir o app
         await AsyncStorage.setItem("@user_data", JSON.stringify(userData));
-        
-        // Atualizamos o estado global para liberar o acesso às abas (Tabs)
         setUser(userData);
       } else {
         throw new Error("E-mail ou senha incorretos.");
@@ -66,28 +80,31 @@ export function AuthProvider({ children }) {
     }
   }
 
-  /**
-   * Função de Logout
-   * Limpa os dados de sessão, mas mantém os dados de registro 
-   * no celular para o próximo login.
-   */
   async function logout() {
     try {
       await AsyncStorage.removeItem("@user_data");
       setUser(null);
+      setThemeColor('#D08700'); // Reseta a cor ao deslogar
     } catch (error) {
       console.error("Erro ao fazer logout", error);
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    // 5. IMPORTANTE: themeColor e atualizarTurnoGlobal precisam estar aqui no value
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      logout, 
+      loading, 
+      themeColor, 
+      atualizarTurnoGlobal 
+    }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Hook personalizado para usar o contexto de forma fácil
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

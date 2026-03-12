@@ -14,13 +14,14 @@ import {
   Keyboard 
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Feather from "@expo/vector-icons/Feather"; // Importado para os olhinhos
+import Feather from "@expo/vector-icons/Feather"; // Feather é mais confiável para ícones de 'adduser'
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from "../context/AuthContext"; // Importado para usar a cor dinâmica
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
+  const { themeColor } = useAuth(); // Pega a cor do turno atual
   
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -28,7 +29,6 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   
-  // Estados para mostrar/esconder as senhas
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -71,8 +71,9 @@ export default function RegisterScreen() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
             <View style={styles.card}>
-              <View style={styles.iconBox}>
-                <AntDesign name="adduser" size={36} color="white" />
+              {/* Ícone corrigido para Feather user-plus e com cor dinâmica */}
+              <View style={[styles.iconBox, { backgroundColor: themeColor }]}>
+                <Feather name="user-plus" size={36} color="white" />
               </View>
               
               <Text style={styles.title}>Criar Conta</Text>
@@ -96,7 +97,6 @@ export default function RegisterScreen() {
                 autoCapitalize="none"
               />
 
-              {/* Campo Senha */}
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={styles.inputPassword}
@@ -111,7 +111,6 @@ export default function RegisterScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Campo Confirmar Senha */}
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={styles.inputPassword}
@@ -126,8 +125,9 @@ export default function RegisterScreen() {
                 </TouchableOpacity>
               </View>
 
+              {/* Botão com cor dinâmica */}
               <TouchableOpacity 
-                style={styles.button} 
+                style={[styles.button, { backgroundColor: themeColor }]} 
                 onPress={handleRegister} 
                 disabled={loading}
               >
@@ -142,7 +142,8 @@ export default function RegisterScreen() {
                 style={styles.linkButton} 
                 onPress={() => navigation.goBack()}
               >
-                <Text style={styles.linkText}>Voltar para o Login</Text>
+                {/* Link com cor dinâmica */}
+                <Text style={[styles.linkText, { color: themeColor }]}>Voltar para o Login</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -153,16 +154,8 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5",
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 20,
-  },
+  container: { flex: 1, backgroundColor: "#F5F5F5" },
+  scrollContainer: { flexGrow: 1, justifyContent: "center", alignItems: "center", paddingVertical: 20 },
   card: {
     width: "88%",
     backgroundColor: "white",
@@ -178,24 +171,13 @@ const styles = StyleSheet.create({
   iconBox: {
     width: 70,
     height: 70,
-    backgroundColor: "#D08700",
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 14,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: "900",
-    color: "#3d2800",
-    marginBottom: 2,
-  },
-  subtitle: {
-    fontSize: 13,
-    color: "#666",
-    marginBottom: 28,
-    textAlign: "center",
-  },
+  title: { fontSize: 26, fontWeight: "900", color: "#3d2800", marginBottom: 2 },
+  subtitle: { fontSize: 13, color: "#666", marginBottom: 28, textAlign: "center" },
   input: {
     width: "100%",
     height: 50,
@@ -219,36 +201,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
     marginBottom: 12,
   },
-  inputPassword: {
-    flex: 1,
-    height: "100%",
-    paddingHorizontal: 14,
-    fontSize: 15,
-    color: "#333",
-  },
-  eyeIcon: {
-    paddingHorizontal: 10,
-  },
+  inputPassword: { flex: 1, height: "100%", paddingHorizontal: 14, fontSize: 15, color: "#333" },
+  eyeIcon: { paddingHorizontal: 10 },
   button: {
     width: "100%",
     height: 50,
-    backgroundColor: "#D08700",
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
   },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  linkButton: {
-    marginTop: 20,
-  },
-  linkText: {
-    color: "#D08700",
-    fontSize: 14,
-    fontWeight: "600",
-  },
+  buttonText: { color: "white", fontSize: 16, fontWeight: "700" },
+  linkButton: { marginTop: 20 },
+  linkText: { fontSize: 14, fontWeight: "600" },
 });
