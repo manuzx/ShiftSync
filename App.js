@@ -23,7 +23,7 @@ const Stack = createNativeStackNavigator();
 function Header() {
   const { themeColor } = useAuth();
   const isMorning = themeColor === "#D08700";
-  const contrastColor = isMorning ? "#1F2937" : "#FFFFFF";
+  const contrastColor = isMorning ? "#ffffff" : "#FFFFFF";
 
   return (
     <View style={[styles.header, { backgroundColor: themeColor }]}>

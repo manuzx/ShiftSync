@@ -27,8 +27,8 @@ export default function HistoricoScreen() {
 
   const getCorPorTurno = (turno) => {
     switch (turno) {
-      case 'Manhã': return '#D08700';
-      case 'Tarde': return '#0284C7';
+      case 'Manhã': return '#ffaa00';
+      case 'Tarde': return '#ff6200';
       case 'Noite': return '#4F46E5';
       default: return '#D08700';
     }

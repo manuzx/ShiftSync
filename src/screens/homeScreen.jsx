@@ -162,7 +162,7 @@ export default function HomeScreen() {
               <Text style={styles.titleEstMaq}>Estado da máquina:</Text> 
               <TextInput
                 style={styles.inputMultilinha}
-                placeholder="Ex: apresenta ruído anormal no motor..."
+                placeholder="Ex: Máquina 3 apresenta ruído anormal no motor. Máquina 7 requer calibração urgente. Todas as outras operando dentro dos parâmetros normais."
                 multiline={true}
                 value={maquinas}
                 onChangeText={setMaquinas}
@@ -174,7 +174,7 @@ export default function HomeScreen() {
               <Text style={styles.titleEstMaq}>Estado dos materiais:</Text>
               <TextInput
                 style={styles.inputMultilinha}
-                placeholder="Ex: Parafusos M8 - stock baixo..."
+                placeholder="Ex: Parafusos M8 - stock baixo (20% restante) Óleo lubrificante - reabastecer amanhã wsz  Matéria-prima A em quantidade suficiente para os próximos 3 dias"
                 multiline={true}
                 value={materiais}
                 onChangeText={setMateriais}
@@ -186,7 +186,7 @@ export default function HomeScreen() {
               <Text style={styles.titleEstMaq}>Incidentes e anomalias:</Text>
               <TextInput
                 style={styles.inputMultilinha}
-                placeholder="Ex: Paragem de 30min às 14h..."
+                placeholder="Ex: Paragem de 30min às 14h por falha elétrica Produto rejeitado lote #1234 Sem incidentes a reportar"
                 multiline={true}
                 value={incidentes}
                 onChangeText={setIncidentes}
@@ -198,7 +198,7 @@ export default function HomeScreen() {
               <Text style={styles.titleEstMaq}>Notas adicionais:</Text>
               <TextInput
                 style={styles.inputMultilinha}
-                placeholder="Ex: Técnico de manutenção virá amanhã..."
+                placeholder="Ex: Técnico de manutenção virá amanhã às 10h Pedido urgente #5678 deve ser priorizadoLimpar área de trabalho 2 antes de iniciar o próximo turno"
                 placeholderTextColor="#9CA3AF"
                 multiline={true}
                 value={notas}
