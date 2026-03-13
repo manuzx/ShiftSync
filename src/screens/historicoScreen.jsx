@@ -52,7 +52,7 @@ export default function HistoricoScreen() {
   const relatoriosFiltrados = relatorios.filter(item => {
     const termo = busca.toLowerCase();
     return (
-      item.operador?.toLowerCase().includes(termo) || 
+      item.operador?.toLowerCase().includes(termo) ||
       item.maquinas?.toLowerCase().includes(termo) || 
       item.indMaq?.toLowerCase().includes(termo)   || 
       item.turno?.toLowerCase().includes(termo)
@@ -74,9 +74,20 @@ export default function HistoricoScreen() {
           </TouchableOpacity>
         </View>
         
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+
         <View style={styles.operatorContainer}>
           <Feather name="user" size={14} color="#6B7280" />
           <Text style={styles.operatorName}>{item.operador}</Text>
+        </View>
+
+        {item.cargo && (
+
+        <View style={[styles.operatorContainer, { backgroundColor: '#E0E7FF' }]}>
+            <Feather name="briefcase" size={12} color="#4F46E5" />
+            <Text style={[styles.cargoName, { color: '#4F46E5' }]}>{item.cargo}</Text>
+        </View>
+        )}
         </View>
 
         <Text style={styles.label}>Identificação da Máquina:</Text>
@@ -204,11 +215,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F3F4F6',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 10, // Aumentei um pouco o preenchimento
+    paddingVertical: 5,
+    borderRadius: 8, // Bordas um pouco mais arredondadas
     alignSelf: 'flex-start',
-    marginBottom: 10,
   },
   operatorName: { 
     fontSize: 13,
@@ -216,6 +226,15 @@ const styles = StyleSheet.create({
     color: '#374151',
     marginLeft: 5
   },
+
+  cargoName: {
+    fontSize: 12, // Um pouco menor que o nome para dar hierarquia
+    fontWeight: '700',
+    marginLeft: 5,
+    textTransform: 'uppercase', // Deixa o cargo em caixa alta para destacar
+  },
+
+
   label: { 
     fontSize: 10,
     fontWeight: 'bold',

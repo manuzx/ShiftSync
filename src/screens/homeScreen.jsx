@@ -29,6 +29,7 @@ export default function HomeScreen() {
 
   const [currentDate, setCurrentDate] = useState('');
   const [nomeUsuario, setNomeUsuario] = useState('Operador');
+  const [cargoUsuario, setCargoUsuario] = useState('Operador');
   const [turnoAtual, setTurnoAtual] = useState('');
   const [keyboardOffset, setKeyboardOffset] = useState(0);
 
@@ -67,9 +68,11 @@ export default function HomeScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      const carregarDados = async () => {
+      const carregarDados = async () => { 
         const nomeSalvo = await AsyncStorage.getItem('@user_name');
+        const cargoSalvo = await AsyncStorage.getItem('@user_position');
         if (nomeSalvo) setNomeUsuario(nomeSalvo);
+        if (cargoSalvo) setCargoUsuario(cargoSalvo);
       };
       carregarDados();
       setTurnoAtual(calcularTurno());
@@ -88,6 +91,7 @@ export default function HomeScreen() {
     try {
       const novoRelatorio = {
         operador: nomeUsuario,
+        cargo: cargoUsuario,
         data: currentDate + " às " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
         turno: turnoAtual,
         indMaq: identificacaoMaq || 'Não identificada',
