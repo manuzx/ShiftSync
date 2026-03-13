@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; 
 import { 
   View, 
   Text, 
@@ -36,13 +36,7 @@ export default function LoginScreen() {
     setLoading(true);
 
     try {
-      // 1. O login atualiza o estado global no AuthContext
       await login(email, password);
-      
-      // 2. IMPORTANTE: Não usamos navigation.replace("Home") aqui.
-      // No seu App.js, o Navigator vai detectar que o 'user' não é mais null
-      // e vai te levar para a Home automaticamente.
-      
     } catch (error) {
       Alert.alert("Erro de Acesso", error.message);
     } finally {
@@ -62,7 +56,6 @@ export default function LoginScreen() {
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.content}>
-              
               <View style={styles.header}>
                 <View style={styles.logoCircle}>
                   <Text style={styles.logoText}>S</Text>
@@ -93,6 +86,7 @@ export default function LoginScreen() {
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
                   />
+
                   <TouchableOpacity 
                     style={styles.eyeIcon} 
                     onPress={() => setShowPassword(!showPassword)}
@@ -123,8 +117,7 @@ export default function LoginScreen() {
                     <Text style={styles.linkText}> Cadastre-se aqui</Text>
                   </TouchableOpacity>
                 </View>
-              </View>
-
+              </View> 
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
@@ -183,10 +176,7 @@ const styles = StyleSheet.create({
     padding: 25,
     elevation: 4,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
   },

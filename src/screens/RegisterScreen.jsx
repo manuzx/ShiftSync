@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; 
 import { 
   View, 
   Text, 
@@ -14,26 +14,25 @@ import {
   Keyboard 
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Feather from "@expo/vector-icons/Feather"; // Feather é mais confiável para ícones de 'adduser'
+import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useAuth } from "../context/AuthContext"; // Importado para usar a cor dinâmica
+import { useAuth } from "../context/AuthContext";
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
-  const { themeColor } = useAuth(); // Pega a cor do turno atual
+  const { themeColor } = useAuth();
   
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   async function handleRegister() {
-    if (!nome.trim() || !email.trim() || !password.trim()) {
+    if (!nome.trim() || !email.trim() || !password.trim()) { 
       Alert.alert("Erro", "Preencha todos os campos.");
       return;
     }
@@ -46,13 +45,16 @@ export default function RegisterScreen() {
     setLoading(true);
 
     try {
-      await AsyncStorage.setItem('@user_name', nome);
+      await AsyncStorage.setItem('@user_name', nome); 
       await AsyncStorage.setItem('@user_email', email);
 
       setTimeout(() => {
         setLoading(false);
         Alert.alert("Sucesso", `Conta criada para ${nome}!`, [
-          { text: "Ir para Login", onPress: () => navigation.navigate("Login") }
+          { 
+            text: "Ir para Login", 
+            onPress: () => navigation.navigate("Login")
+          }
         ]);
       }, 1000);
 
@@ -71,7 +73,6 @@ export default function RegisterScreen() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
             <View style={styles.card}>
-              {/* Ícone corrigido para Feather user-plus e com cor dinâmica */}
               <View style={[styles.iconBox, { backgroundColor: themeColor }]}>
                 <Feather name="user-plus" size={36} color="white" />
               </View>
@@ -104,7 +105,7 @@ export default function RegisterScreen() {
                   placeholderTextColor="#999"
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
+                  secureTextEntry={!showPassword} 
                 />
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
                   <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#999" />
@@ -125,10 +126,9 @@ export default function RegisterScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Botão com cor dinâmica */}
               <TouchableOpacity 
                 style={[styles.button, { backgroundColor: themeColor }]} 
-                onPress={handleRegister} 
+                onPress={handleRegister}
                 disabled={loading}
               >
                 {loading ? (
@@ -142,7 +142,6 @@ export default function RegisterScreen() {
                 style={styles.linkButton} 
                 onPress={() => navigation.goBack()}
               >
-                {/* Link com cor dinâmica */}
                 <Text style={[styles.linkText, { color: themeColor }]}>Voltar para o Login</Text>
               </TouchableOpacity>
             </View>
@@ -154,8 +153,16 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F5F5" },
-  scrollContainer: { flexGrow: 1, justifyContent: "center", alignItems: "center", paddingVertical: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F5F5"
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20
+  },
   card: {
     width: "88%",
     backgroundColor: "white",
@@ -176,8 +183,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 14,
   },
-  title: { fontSize: 26, fontWeight: "900", color: "#3d2800", marginBottom: 2 },
-  subtitle: { fontSize: 13, color: "#666", marginBottom: 28, textAlign: "center" },
+  title: {
+    fontSize: 26,
+    fontWeight: "900",
+    color: "#3d2800",
+    marginBottom: 2,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: "#666",
+    marginBottom: 28,
+    textAlign: "center"
+  },
   input: {
     width: "100%",
     height: 50,
@@ -201,8 +218,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafa",
     marginBottom: 12,
   },
-  inputPassword: { flex: 1, height: "100%", paddingHorizontal: 14, fontSize: 15, color: "#333" },
-  eyeIcon: { paddingHorizontal: 10 },
+  inputPassword: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 14,
+    fontSize: 15,
+    color: "#333"
+  },
+  eyeIcon: {
+    paddingHorizontal: 10
+  },
   button: {
     width: "100%",
     height: 50,
@@ -211,7 +236,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 10,
   },
-  buttonText: { color: "white", fontSize: 16, fontWeight: "700" },
-  linkButton: { marginTop: 20 },
-  linkText: { fontSize: 14, fontWeight: "600" },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "700"
+  },
+  linkButton: {
+    marginTop: 20
+  },
+  linkText: {
+    fontSize: 14,
+    fontWeight: "600"
+  },
 });

@@ -6,17 +6,12 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  // 1. Estado para armazenar a cor do tema globalmente
-  const [themeColor, setThemeColor] = useState('#D08700'); 
+  const [themeColor, setThemeColor] = useState('#D08700');
 
-  // 2. Função auxiliar para mapear turnos em cores
   const getCorPorTurno = (turno) => {
     switch (turno) {
       case 'Manhã': return '#ffaa00';
-
       case 'Tarde': return '#ff6200';
-
       case 'Noite': return '#4F46E5';
       default: return '#D08700';
     }
@@ -32,7 +27,6 @@ export function AuthProvider({ children }) {
           setUser(JSON.parse(stored));
         }
         
-        // 3. Ao abrir o app, recupera a cor do último turno salvo
         if (storedTurno) {
           setThemeColor(getCorPorTurno(storedTurno));
         }
@@ -45,8 +39,7 @@ export function AuthProvider({ children }) {
     loadStorageData();
   }, []);
 
-  // 4. ESSA É A FUNÇÃO QUE ESTAVA FALTANDO NO SEU ARQUIVO
-  async function atualizarTurnoGlobal(novoTurno) {
+  async function atualizarTurnoGlobal(novoTurno) { 
     try {
       const novaCor = getCorPorTurno(novoTurno);
       setThemeColor(novaCor);
@@ -86,14 +79,13 @@ export function AuthProvider({ children }) {
     try {
       await AsyncStorage.removeItem("@user_data");
       setUser(null);
-      setThemeColor('#D08700'); // Reseta a cor ao deslogar
+      setThemeColor('#D08700');
     } catch (error) {
       console.error("Erro ao fazer logout", error);
     }
   }
 
   return (
-    // 5. IMPORTANTE: themeColor e atualizarTurnoGlobal precisam estar aqui no value
     <AuthContext.Provider value={{ 
       user, 
       login, 
