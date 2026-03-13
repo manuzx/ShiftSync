@@ -83,9 +83,9 @@ export default function HistoricoScreen() {
 
         {item.cargo && (
 
-        <View style={[styles.operatorContainer, { backgroundColor: '#E0E7FF' }]}>
-            <Feather name="briefcase" size={12} color="#4F46E5" />
-            <Text style={[styles.cargoName, { color: '#4F46E5' }]}>{item.cargo}</Text>
+        <View style={[styles.operatorContainer, { backgroundColor: '#F3F4F6' }]}> 
+          <Feather name="briefcase" size={12} color="#6B7280" />
+          <Text style={[styles.cargoName, { color: '#000000' }]}>{item.cargo}</Text>
         </View>
         )}
         </View>
@@ -229,9 +229,10 @@ const styles = StyleSheet.create({
 
   cargoName: {
     fontSize: 12, // Um pouco menor que o nome para dar hierarquia
-    fontWeight: '700',
+    fontWeight: 'bold',
     marginLeft: 5,
     textTransform: 'uppercase', // Deixa o cargo em caixa alta para destacar
+  
   },
 
 
