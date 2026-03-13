@@ -222,6 +222,25 @@ const styles = StyleSheet.create({
   containerIncidentesAnomalias: { width: '90%', backgroundColor: '#FFF', borderRadius: 10, padding: 18, marginTop: 20, elevation: 3 },
   titleEstMaq: { fontSize: 16, fontWeight: '700', color: '#1F2937', marginBottom: 12 },
   inputMultilinha: { backgroundColor: '#F3F4F6', borderRadius: 8, padding: 12, height: 100, textAlignVertical: 'top', color: '#374151', borderWidth: 1, borderColor: '#E5E7EB' },
-  btnGuardar: { width: '90%', padding: 18, borderRadius: 12, marginTop: 35, marginBottom: 20, alignItems: 'center', elevation: 4 },
-  btnTexto: { fontWeight: 'bold', fontSize: 16, textTransform: 'uppercase' },
+  btnGuardar: { 
+  width: '95%',        // Aumentei de 90% para 95% para ocupar quase toda a largura
+  paddingVertical: 22, // Aumentei a altura interna (vertical) para dar mais volume
+  borderRadius: 15,    // Bordas um pouco mais arredondadas para um visual moderno
+  marginTop: 40,       // Mais respiro em relação aos inputs
+  marginBottom: 25, 
+  alignItems: 'center', 
+  justifyContent: 'center',
+  elevation: 8,        // Sombra mais forte para dar a sensação de que o botão está "flutuando"
+  shadowColor: '#000', // Sombra para iOS
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.3,
+  shadowRadius: 5,
+},
+
+btnTexto: { 
+  fontWeight: '900',   // Peso máximo na fonte
+  fontSize: 18,        // Aumentei de 16 para 18 para combinar com o botão maior
+  textTransform: 'uppercase', 
+  letterSpacing: 1.2,  // Espaçamento entre letras para um ar mais profissional
+},
 });

@@ -146,8 +146,6 @@ export default function SettingsScreen() {
           <Text style={styles.exitButtonText}>Sair da Conta</Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>ShiftSync v1.0.0</Text>
-        <Text style={styles.footerBrand}>Desenvolvido por Emmanuel</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -161,12 +159,18 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#FFF', padding: 20, borderRadius: 15, marginBottom: 20, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
   label: { fontSize: 14, fontWeight: '700', color: '#374151', marginBottom: 8 },
   input: { backgroundColor: '#F3F4F6', padding: 12, borderRadius: 10, marginBottom: 15, color: '#1F2937', borderWidth: 1, borderColor: '#E5E7EB' },
-  saveButton: { padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 5 },
+  saveButton: { 
+  padding: 15, // Aumentado de 10 para 18
+  borderRadius: 12, 
+  alignItems: 'center', 
+  marginTop: 15, // Aumentei um pouco o espaçamento superior também
+  width: '100%', // Garante que ele use a largura total do card
+},
   saveButtonText: { color: '#FFF', fontWeight: 'bold', fontSize: 16 },
   sectionTitle: { fontSize: 18, fontWeight: '800', color: '#1F2937', marginBottom: 5 },
   description: { fontSize: 12, color: '#9CA3AF', marginBottom: 15 },
   shiftContainer: { flexDirection: 'row', justifyContent: 'space-between' },
-  shiftOption: { flex: 1, paddingVertical: 12, borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 10, marginHorizontal: 4, alignItems: 'center' },
+  shiftOption: { flex: 1, paddingVertical: 10, borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 10, marginHorizontal: 4, alignItems: 'center' },
   shiftText: { fontWeight: '600', color: '#6B7280' },
   exitButton: { flexDirection: 'row', backgroundColor: '#FEE2E2', padding: 16, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginTop: 10 },
   exitButtonText: { color: '#DC2626', fontWeight: '700', fontSize: 16, marginLeft: 10 },
