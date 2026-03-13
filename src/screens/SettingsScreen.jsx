@@ -141,6 +141,18 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+{/* NOVO CARD: SOBRE O SHIFTSYNC (Conforme a imagem) */}
+        <View style={[styles.aboutCard, { backgroundColor: themeColor + '10', borderColor: themeColor + '30' }]}>
+          <Text style={[styles.aboutTitle, { color: themeColor }]}>Sobre o ShiftSync</Text>
+          <Text style={styles.aboutText}>
+            O ShiftSync permite que operadores registem informações críticas sobre o estado das máquinas, 
+            materiais e incidentes durante o seu turno.
+          </Text>
+          <Text style={styles.aboutText}>
+            Todos os dados são guardados localmente no seu dispositivo, garantindo acesso rápido ao histórico de relatórios.
+          </Text>
+        </View>
+
         <TouchableOpacity style={styles.exitButton} onPress={handleLogout} activeOpacity={0.7}>
           <Feather name="log-out" size={20} color="#DC2626" />
           <Text style={styles.exitButtonText}>Sair da Conta</Text>
@@ -156,7 +168,7 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: 20, paddingTop: 15, paddingBottom: 40 },
   textAjuste: { fontSize: 16, color: '#6B7280', fontWeight: 'bold', marginBottom: 5 },
   title: { fontSize: 26, fontWeight: '900', color: '#1F2937', marginBottom: 20 },
-  card: { backgroundColor: '#FFF', padding: 20, borderRadius: 15, marginBottom: 20, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+  card: { backgroundColor: '#F3F4F6', padding: 20, borderRadius: 10, marginBottom: 20, elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
   label: { fontSize: 14, fontWeight: '700', color: '#374151', marginBottom: 8 },
   input: { backgroundColor: '#F3F4F6', padding: 12, borderRadius: 10, marginBottom: 15, color: '#1F2937', borderWidth: 1, borderColor: '#E5E7EB' },
   saveButton: { 
@@ -175,5 +187,12 @@ const styles = StyleSheet.create({
   exitButton: { flexDirection: 'row', backgroundColor: '#FEE2E2', padding: 16, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginTop: 10 },
   exitButtonText: { color: '#DC2626', fontWeight: '700', fontSize: 16, marginLeft: 10 },
   versionText: { textAlign: 'center', color: '#9CA3AF', fontSize: 12, marginTop: 25 },
-  footerBrand: { textAlign: 'center', color: '#D1D5DB', fontSize: 10, marginTop: 5 }
+  footerBrand: { textAlign: 'center', color: '#D1D5DB', fontSize: 10, marginTop: 5 },
+          // Estilos do novo Card "Sobre"
+  aboutCard: { 
+    padding: 20, 
+    borderRadius: 15, 
+    marginBottom: 20, 
+    borderWidth: 1,
+  },
 });
